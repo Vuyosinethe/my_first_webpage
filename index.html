@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID Country Detector</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>Country Information</h1>
+        <input type="text" id="idInput" placeholder="Enter your ID Number">
+
+        <!-- Hidden Processing Animation -->
+        <p id="processing-animation" style="display: none;">🔄 Processing your ID...</p>
+
+        <button onclick="processID()">Submit</button>
+
+        <!-- Loading Animation -->
+        <div id="loading" class="hidden">Processing...</div>
+
+        <!-- Results Section -->
+        <div id="result"></div>
+
+        <!-- Map (Ensure it has a height in CSS) -->
+        <div id="map"></div>
+    </div>
+
+    <button id="themeToggle">🌙 Toggle Dark Mode</button>
+    
+    <select id="themeSelector">
+        <option value="default">Default Theme</option>
+        <option value="blue">Blue Theme</option>
+        <option value="green">Green Theme</option>
+        <option value="red">Red Theme</option>
+    </select> 
+
+    <!-- Chatbot -->
+    <div id="chat-container">
+        <div id="chatbox">
+            <p class="bot-message">🤖 Hello! Ask me about any country.</p>
+        </div>
+        <input type="text" id="user-input" placeholder="Ask about a country..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
