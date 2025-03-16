@@ -18,17 +18,16 @@ function processID() {
         }
 
         let currentYear = new Date().getFullYear();
-        let age = currentYear - birthYear;
+        let age = birthYear ? (currentYear - birthYear) : "Unknown"; // Fix: Prevent age calculation error
 
-        // Fetch country details & update UI
-        fetchCountryDetails(country);
-
+        // Display detected details (Fix: Used += to prevent overwriting)
         document.getElementById("result").innerHTML = `
             <h2>Details</h2>
             <p><strong>Country:</strong> ${country}</p>
             <p><strong>Age:</strong> ${age} years old</p>
         `;
 
+        fetchCountryDetails(country); // Fetch additional details
         updateMap(lat, lon);
     }, 2000);
 }
@@ -47,10 +46,12 @@ function detectIDFormat(id) {
         lat = -30; lon = 25;
     } else if (/^\d{3}-\d{2}-\d{4}$/.test(id)) { // USA
         country = "United States";
+        birthYear = null;  // Fix: No birth year in SSN
         valid = true;
         lat = 37.0902; lon = -95.7129;
     } else if (/^\d{12}$/.test(id)) { // India
         country = "India";
+        birthYear = null;  // Fix: No birth year in Aadhaar
         valid = true;
         lat = 20.5937; lon = 78.9629;
     } else if (/^\d{18}$/.test(id)) { // China
@@ -58,7 +59,7 @@ function detectIDFormat(id) {
         birthYear = parseInt(id.substring(6, 10));
         valid = true;
         lat = 35.8617; lon = 104.1954;
-    } 
+    }
 
     return { country, birthYear, valid, lat, lon };
 }
@@ -80,6 +81,7 @@ function fetchCountryDetails(country) {
             let languages = countryInfo.languages ? Object.values(countryInfo.languages).join(", ") : "N/A";
             let flagUrl = countryInfo.flags?.png || countryInfo.flags?.svg || "";
 
+            // Fix: Used += instead of overwriting
             document.getElementById("result").innerHTML += `
                 <p><strong>Currency:</strong> ${currency}</p>
                 <p><strong>Timezone:</strong> ${timezone}</p>
@@ -87,7 +89,6 @@ function fetchCountryDetails(country) {
                 <img src="${flagUrl}" alt="${country} Flag" width="150">
             `;
 
-            // Fetch leader info separately
             fetchLeaderInfo(country);
         })
         .catch(error => {
@@ -98,10 +99,10 @@ function fetchCountryDetails(country) {
 
 function fetchLeaderInfo(country) {
     let leaders = {
-        "South Africa": { name: "Cyril Ramaphosa", image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Cyril_Ramaphosa_2019.jpg/640px-Cyril_Ramaphosa_2019.jpg" },
-        "United States": { name: "Joe Biden", image: "https://upload.wikimedia.org/wikipedia/commons/6/68/Joe_Biden_presidential_portrait.jpg" },
-        "India": { name: "Narendra Modi", image: "https://upload.wikimedia.org/wikipedia/commons/d/d3/Narendra_Modi_2023.jpg" },
-        "China": { name: "Xi Jinping", image: "https://upload.wikimedia.org/wikipedia/commons/4/42/Xi_Jinping_2019.jpg" }
+        "South Africa": { name: "Cyril Ramaphosa", image: "https://th.bing.com/th/id/OIP.PhHp9jsJBk5-NJitb1ngSQHaFT?w=2048&h=1467&rs=1&pid=ImgDetMain" },
+        "United States": { name: "Donald J Trump", image: "https://dynaimage.cdn.cnn.com/cnn/digital-images/org/8257b9f3-bd66-4288-bb5f-734c4fc74bf5.jpg" },
+        "India": { name: "Narendra Modi", image: "https://english.cdn.zeenews.com/sites/default/files/2022/01/21/1007390-34.jpg" },
+        "China": { name: "Xi Jinping", image: "https://th.bing.com/th/id/OIP.wnL_LZQQIZ5mw3sDxI4tJAHaE8?rs=1&pid=ImgDetMain" }
     };
 
     let leader = leaders[country] || { name: "Unknown", image: "https://via.placeholder.com/150" };
@@ -144,13 +145,7 @@ document.getElementById("themeToggle").addEventListener("click", () => {
     localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
 });
 
-// Apply Dark Mode on Page Load
-if (localStorage.getItem("darkMode") === "true") {
-    document.body.classList.add("dark-mode");
-}
-
-// 🎨 Apply Saved Theme
-let savedTheme = localStorage
+// 🎨 Theme Selector Fix
 document.getElementById("themeSelector").addEventListener("change", (event) => {
     let theme = event.target.value;
     document.body.className = theme === "default" ? "" : `${theme}-theme`;
